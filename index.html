@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusSpark - Classroom</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+</head>
+<body class="bg-gray-50">
+    <custom-navbar></custom-navbar>
+    
+    <main class="container mx-auto px-4 py-8">
+        <!-- Language Selector -->
+        <div class="flex justify-end mb-6">
+            <select id="language-select" class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="hy">Հայերեն</option>
+                <option value="ka">ქართული</option>
+                <option value="ru">Русский</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+
+        <!-- Hero Section -->
+        <section id="vanta-bg" class="rounded-xl shadow-lg overflow-hidden mb-12 h-96 flex items-center justify-center relative">
+            <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-center px-4">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-4" data-lang-key="welcome">Բարի գալուստ մեր դասարան</h1>
+                <p class="text-xl text-white max-w-2xl" data-lang-key="welcome_sub">Միացեք մեր սմարթ ուսումնական հարթակին</p>
+            </div>
+        </section>
+
+        <!-- Classroom Schedule -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6" data-lang-key="schedule">Դասացուցակ</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- This will be dynamically populated -->
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                    <h3 class="font-semibold text-lg mb-2" data-lang-key="math">Մաթեմատիկա</h3>
+                    <p class="text-gray-600 mb-2"><i data-feather="clock"></i> <span data-lang-key="time">Ժամ</span>: 09:00 - 10:30</p>
+                    <p class="text-gray-600"><i data-feather="map-pin"></i> <span data-lang-key="location">Սենյակ</span>: 305</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- This will be dynamically populated -->
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                    <h3 class="font-semibold text-lg mb-2" data-lang-key="math">qunem arpineyi pucy</h3>
+                    <p class="text-gray-600 mb-2"><i data-feather="clock"></i> <span data-lang-key="time">Ժամ</span>: 09:00 - 10:30</p>
+                    <p class="text-gray-600"><i data-feather="map-pin"></i> <span data-lang-key="location">Սենյակ</span>: 305</p>
+                </div>
+                <!-- More classes will be added here -->
+            </div>
+        </section>
+
+        <!-- Tests Section -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6" data-lang-key="upcoming_tests">Առաջիկա թեստեր</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- This will be dynamically populated -->
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                    <h3 class="font-semibold text-lg mb-2" data-lang-key="georgian">Վրացերեն</h3>
+                    <p class="text-gray-600 mb-2"><i data-feather="calendar"></i> <span data-lang-key="date">Ամսաթիվ</span>: 15.04.2024</p>
+                    <p class="text-gray-600"><i data-feather="book"></i> <span data-lang-key="topic">Թեմա</span>: Գրավոր թեստ</p>
+                </div>
+                <!-- More tests will be added here -->
+            </div>
+        </section>
+
+        <!-- AI Assistant -->
+        <section class="mb-12 bg-blue-50 p-8 rounded-xl">
+            <div class="flex items-center mb-6">
+                <div class="bg-blue-100 p-3 rounded-full mr-4">
+                    <i data-feather="cpu" class="text-blue-600"></i>
+                </div>
+                <h2 class="text-2xl font-bold" data-lang-key="ai_assistant">AI Օգնական</h2>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div id="ai-chat" class="h-48 overflow-y-auto mb-4 p-3 border rounded-lg bg-gray-50">
+                    <!-- AI messages will appear here -->
+                </div>
+                <div class="flex">
+                    <input type="text" id="ai-input" placeholder="Հարցրեք Ձեր հարցը..." class="flex-grow px-4 py-2 rounded-l-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <button id="ai-send" class="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 transition">
+                        <i data-feather="send"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Games Section -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6" data-lang-key="educational_games">Ուսումնական խաղեր</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <a href="#" class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 flex flex-col items-center text-center">
+                    <div class="bg-green-100 p-3 rounded-full mb-3">
+                        <i data-feather="hexagon" class="text-green-600"></i>
+                    </div>
+                    <h3 class="font-semibold" data-lang-key="math_game">Մաթեմատիկական խաղ</h3>
+                </a>
+                <a href="#" class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 flex flex-col items-center text-center">
+                    <div class="bg-red-100 p-3 rounded-full mb-3">
+                        <i data-feather="book" class="text-red-600"></i>
+                    </div>
+                    <h3 class="font-semibold" data-lang-key="georgian_game">Վրացերեն խաղ</h3>
+                </a>
+                <a href="#" class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 flex flex-col items-center text-center">
+                    <div class="bg-yellow-100 p-3 rounded-full mb-3">
+                        <i data-feather="award" class="text-yellow-600"></i>
+                    </div>
+                    <h3 class="font-semibold" data-lang-key="memory_game">Հիշողության խաղ</h3>
+                </a>
+                <a href="#" class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 flex flex-col items-center text-center">
+                    <div class="bg-purple-100 p-3 rounded-full mb-3">
+                        <i data-feather="puzzle" class="text-purple-600"></i>
+                    </div>
+                    <h3 class="font-semibold" data-lang-key="puzzle_game">Հանելուկ</h3>
+                </a>
+                <a href="#" class="bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-transform hover:-translate-y-1 flex flex-col items-center text-center">
+                    <div class="bg-blue-100 p-3 rounded-full mb-3">
+                        <i data-feather="crosshair" class="text-blue-600"></i>
+                    </div>
+                    <h3 class="font-semibold" data-lang-key="quiz_game">Վիկտորինա</h3>
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <custom-footer></custom-footer>
+
+    <!-- Scripts -->
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="script.js"></script>
+    <script>
+        feather.replace();
+        
+        // Initialize Vanta.js globe
+        VANTA.GLOBE({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x3a86ff,
+            backgroundColor: 0xf8f9fa
+        });
+    </script>
+</body>
+</html>
