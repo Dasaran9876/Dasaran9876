@@ -174,3 +174,13 @@ function loadClassData() {
     // This would be replaced with actual data loading
     console.log("Loading class data...");
 }
+
+for (let i = 0; i < 20; i++) {
+  const bubble = document.createElement('div');
+  bubble.classList.add('bubble');
+  bubble.style.width = `${Math.random() * 60 + 20}px`;
+  bubble.style.height = bubble.style.width;
+  bubble.style.left = `${Math.random() * 100}vw`;
+  bubble.style.animationDuration = `${Math.random() * 10 + 5}s`;
+  document.body.appendChild(bubble);
+}

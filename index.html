@@ -43,12 +43,7 @@
                     <p class="text-gray-600"><i data-feather="map-pin"></i> <span data-lang-key="location">Սենյակ</span>: 305</p>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- This will be dynamically populated -->
-                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
-                    <h3 class="font-semibold text-lg mb-2" data-lang-key="math">qunem arpineyi pucy</h3>
-                    <p class="text-gray-600 mb-2"><i data-feather="clock"></i> <span data-lang-key="time">Ժամ</span>: 09:00 - 10:30</p>
-                    <p class="text-gray-600"><i data-feather="map-pin"></i> <span data-lang-key="location">Սենյակ</span>: 305</p>
-                </div>
+            
                 <!-- More classes will be added here -->
             </div>
         </section>
@@ -67,26 +62,19 @@
             </div>
         </section>
 
-        <!-- AI Assistant -->
-        <section class="mb-12 bg-blue-50 p-8 rounded-xl">
-            <div class="flex items-center mb-6">
-                <div class="bg-blue-100 p-3 rounded-full mr-4">
-                    <i data-feather="cpu" class="text-blue-600"></i>
-                </div>
-                <h2 class="text-2xl font-bold" data-lang-key="ai_assistant">AI Օգնական</h2>
-            </div>
-            <div class="bg-white p-6 rounded-lg shadow-md">
-                <div id="ai-chat" class="h-48 overflow-y-auto mb-4 p-3 border rounded-lg bg-gray-50">
-                    <!-- AI messages will appear here -->
-                </div>
-                <div class="flex">
-                    <input type="text" id="ai-input" placeholder="Հարցրեք Ձեր հարցը..." class="flex-grow px-4 py-2 rounded-l-lg border focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <button id="ai-send" class="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 transition">
-                        <i data-feather="send"></i>
-                    </button>
-                </div>
-            </div>
-        </section>
+<div id="gevorik-box">
+  <div id="gevorik-messages">
+    <div><b>Ընկեր Գեւորիկ:</b> Բարև, ես քո AI ուսուցիչն եմ։ Հարցրու ցանկացած դպրոցական թեմա 📚</div>
+  </div>
+  <div id="gevorik-input">
+    <input id="gevorik-text" type="text" placeholder="Գրիր քո հարցը այստեղ..." />
+    <button id="gevorik-send">📨</button>
+  </div>
+</div>
+
+<script src="gevorik.js"></script>
+
+
 
         <!-- Games Section -->
         <section class="mb-12">

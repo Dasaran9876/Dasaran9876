@@ -2,11 +2,30 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 body {
-    font-family: 'Inter', sans-serif;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background-color:blue;
+  margin: 0;
+  background: linear-gradient(135deg, #a8edea, #fed6e3);
+  height: 100vh;
+}
+
+/* Պղպջակների ոճ */
+.bubble {
+  position: absolute;
+  bottom: -100px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  animation: rise 10s infinite ease-in;
+}
+
+/* Պղպջակների շարժման անիմացիա */
+@keyframes rise {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-110vh) scale(1.5);
+    opacity: 0;
+  }
 }
 
 /* Language selector styles */
@@ -47,4 +66,50 @@ body {
 
 .fade-in {
     animation: fadeIn 0.5s ease-out forwards;
+}
+
+/*GEVORIK*/
+#gevorik-box {
+  margin: 50px auto;       /* վերևի և ներքևի 50px, կենտրոնացված */
+  width: calc(100% - 40px); /* 20px ձախ + 20px աջ = 40px պակաս ամբողջ էկրանից */
+  max-width: 100%;          /* չհայտնվի scroll */
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+
+#gevorik-messages {
+  padding: 15px;
+  height: 400px;
+  overflow-y: auto;
+  font-size: 16px;
+  line-height: 1.5;
+  background: linear-gradient(180deg, #f9f9f9, #ffffff);
+}
+
+#gevorik-input {
+  display: flex;
+  border-top: 1px solid #ccc;
+}
+
+#gevorik-input input {
+  flex: 1;
+  border: none;
+  padding: 12px;
+  outline: none;
+  font-size: 16px;
+}
+
+#gevorik-input button {
+  border: none;
+  background: #4CAF50;
+  color: white;
+  padding: 12px 18px;
+  cursor: pointer;
+  font-size: 16px;
 }
