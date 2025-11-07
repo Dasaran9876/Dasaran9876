@@ -1,19 +1,35 @@
 /* Shared styles across all pages */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* Shared styles across all pages */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 body {
   margin: 0;
   background: linear-gradient(135deg, #a8edea, #fed6e3);
   height: 100vh;
+
+}
+
+/* Պղպջակների կոնտեյներ */
+#bubbles-container {
+  position: absolute; /* թող մնա ամբողջ էկրանի վրա, ֆոնի նման */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: -9999; /* ֆոնի վրա */
+  pointer-events: none; /* որ չխանգարի սեղմել մյուս մասերին */
 }
 
 /* Պղպջակների ոճ */
 .bubble {
   position: absolute;
-  bottom: -100px;
-  background: rgba(255, 255, 255, 0.2);
+  bottom: -700px;
+  background: rgb(124, 248, 8);
   border-radius: 50%;
-  animation: rise 10s infinite ease-in;
+  animation: rise 30s infinite ease-in;
 }
 
 /* Պղպջակների շարժման անիմացիա */
@@ -23,10 +39,11 @@ body {
     opacity: 1;
   }
   100% {
-    transform: translateY(-110vh) scale(1.5);
+    transform: translateY(-400vh) scale(0.7);
     opacity: 0;
   }
 }
+
 
 /* Language selector styles */
 #language-select {
@@ -113,3 +130,118 @@ body {
   cursor: pointer;
   font-size: 16px;
 }
+.game-section {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #7d04ee, #2bca03);
+  flex-wrap: wrap;
+  border-radius: 24px;
+}
+
+.game-card {
+  background: #1f1b2e;
+  border-radius: 16px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+  width: 300px;
+  text-align: center;
+  color: #fff;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.game-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.game-card h3 {
+  font-size: 20px;
+  margin: 15px 0 10px;
+  color: #ff4cff;
+}
+
+.game-card p {
+  font-size: 15px;
+  color: #ddd;
+  padding: 0 15px 20px;
+}
+
+.play-btn {
+  display: inline-block;
+  background: #ff007f;
+  color: white;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.play-btn:hover {
+  background: #ff3fbf;
+}
+
+.game-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 12px 25px rgba(255, 0, 127, 0.3);
+}
+
+.aper {
+   background: linear-gradient(135deg, #c7d407, #03f33f);
+  color: white;
+   width: 100%;
+  height: 100%;
+
+}
+
+.aper2 {
+  display: flex;
+  justify-content: flex-start; /* Տեքստը ձախ */
+  align-items: flex-start; /* Տեքստը վերև */
+  padding: 15px; /* Թեթև հեռացնենք անկյունից */
+  left: 30px;
+  font-size: 78px;
+  font-family:fantasy;
+}
+
+.aper3 {
+  font-size:45px;
+  padding:10px;
+  font-family:fantasy;
+}
+
+.instagram-div { 
+  position:absolute;
+ top: 50%;
+ right: 95px;
+   width: 150px;
+    height: 150px; 
+    font-size: 50%;
+    border-radius: 50%; 
+     background: linear-gradient(135deg, #e40303, #f38303); 
+    border-radius: 50%;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+     .instagram-div:hover{
+          transform: scale(1.1);
+          background: rgb(4, 236, 128);
+     }
+
+     .instagram-div img {
+      width: 100%;
+      height:100%;
+      object-fit: cover;
+      border-radius: 100px;
+     }
+
+    
+
+    
