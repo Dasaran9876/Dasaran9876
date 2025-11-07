@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusSpark - Classroom</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="games.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+</head>
+<body class="">
+    <custom-navbar></custom-navbar>
+    
+    
+        <!-- Language Selector -->
+        <div class="flex justify-end mb-6">
+            <select id="language-select" class="px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="hy">Հայերեն</option>
+                <option value="ka">ქართული</option>
+                <option value="ru">Русский</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+
+        <!-- Hero Section -->
+        <section id="vanta-bg" class="rounded-xl shadow-lg overflow-hidden mb-12 h-96 flex items-center justify-center relative">
+            <div class="aper">
+                <h1 class="aper2" data-lang-key="welcome">Բարի գալուստ մեր 
+                     դասարան</h1>
+                <p class="aper3" data-lang-key="welcome_sub">Միացեք մեր սմարթ ուսումնական հարթակին</p>
+            </div>
+            <div class="instagram-div">
+                <a href="https://www.instagram.com/lx_grade?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw=="target="_blank">
+                <img src="picture/isticon.png"  alt="instagram">
+                </a>
+                </div>
+        </section>
+
+          <div id="schedule-box" style="padding:20px;border-radius:20px;color:white;font-family:sans-serif;animation:bgmove 10s infinite alternate; background:linear-gradient(120deg,#4e54c8,#8f94fb);box-shadow:0 0 20px rgba(0,0,0,0.3);">
+  <h2 id="schedule-title" style="text-align:center;font-size:1.8em;margin-bottom:10px;"></h2>
+  <div id="warning" style="text-align:center;margin-bottom:15px;font-size:1.1em;color:yellow;font-weight:bold;"></div>
+  <div id="lessons" style="display:flex;flex-direction:column;gap:10px;"></div>
+</div>
+
+<style>
+@keyframes bgmove {
+  0% {background:linear-gradient(120deg,#4e54c8,#8f94fb);}
+  100% {background:linear-gradient(120deg,#8f94fb,#4e54c8);}
+}
+.lesson-card {
+  background:rgba(255,255,255,0.1);
+  border-radius:12px;
+  padding:10px 15px;
+  backdrop-filter:blur(4px);
+  transition:0.3s;
+  font-size:1.05em;
+}
+.lesson-card:hover {
+  background:rgba(255,255,255,0.2);
+  transform:scale(1.03);
+}
+</style>
+
+<script>
+const API_URL = "https://api.sheetbest.com/sheets/2751a9ea-83c7-479a-8b76-5324711380a1"; // ← փոխիր քո sheet.best API-ով
+const NOTIFY_TIME = 14;
+
+function getTomorrowName() {
+  const days = ["Կիրակի","Երկուշաբթի","Երեքշաբթի","Չորեքշաբթի","Հինգշաբթի","Ուրբաթ","Շաբաթ"];
+  const now = new Date();
+  let todayIndex = now.getDay();
+  const currentHour = now.getHours();
+
+  if(currentHour >= NOTIFY_TIME){
+    todayIndex += 1;
+  }
+
+  // Ուրբաթից հետո անցնում է երկուշաբթի
+  if(days[todayIndex % 7] === "Շաբաթ" || days[todayIndex % 7] === "Կիրակի"){
+    return "Երկուշաբթի";
+  }
+
+  return days[todayIndex % 7];
+}
+
+async function showScheduleFromSheet() {
+  const days = ["Կիրակի","Երկուշաբթի","Երեքշաբթի","Չորեքշաբթի","Հինգշաբթի","Ուրբաթ","Շաբաթ"];
+  const now = new Date();
+  const todayName = days[now.getDay()];
+  const tomorrowName = getTomorrowName();
+
+  // Վերնագիր՝ այսօրվա դասերը
+  document.getElementById("schedule-title").innerText = `Այսօրվա դասերն են 📘 (${todayName})`;
+  document.getElementById("warning").innerText = `⚠️ ԹԱՌՄԱՑՎՈՒՄ Է ${NOTIFY_TIME}:00-ին`;
+
+  const lessonsDiv = document.getElementById("lessons");
+  lessonsDiv.innerHTML = "";
+
+  try {
+    const response = await fetch(API_URL);
+    const data = await response.json();
+
+    // Ընտրում ենք վաղվա դասերը
+    const lessons = data.filter(row => row["Օր"] === tomorrowName);
+
+    if(lessons.length === 0){
+      lessonsDiv.innerHTML = `<div class='lesson-card'>${tomorrowName} — դասերը դեռ չեն ավելացվել 😴</div>`;
+      return;
+    }
+
+    lessons.forEach(item => {
+      const div = document.createElement("div");
+      div.className = "lesson-card";
+      div.innerHTML = `<b>${item["Առարկա"]}</b> — ${item["Դաս"] || "Դասը դեռ չկա"} — ${item["Առաջադրանք"] || "Առաջադրանք դեռ չկա"}`;
+      lessonsDiv.appendChild(div);
+    });
+
+  } catch (error) {
+    console.error("⚠️ Խնդիր կա տվյալները ստանալու մեջ:", error);
+    lessonsDiv.innerHTML = "<div class='lesson-card'>Չհաջողվեց բեռնել տվյալները 😢</div>";
+  }
+}
+
+// Ցուցադրել դասերը
+showScheduleFromSheet();
+
+</script>
+
+        <!-- Tests Section -->
+        <section class="mb-12">
+            <h2 class="text-2xl font-bold mb-6" data-lang-key="upcoming_tests">Առաջիկա թեստեր</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- This will be dynamically populated -->
+                <div class="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow">
+                    <h3 class="font-semibold text-lg mb-2" data-lang-key="georgian">Վրացերեն</h3>
+                    <p class="text-gray-600 mb-2"><i data-feather="calendar"></i> <span data-lang-key="date">Ամսաթիվ</span>: 15.04.2024</p>
+                    <p class="text-gray-600"><i data-feather="book"></i> <span data-lang-key="topic">Թեմա</span>: Գրավոր թեստ</p>
+                </div>
+                <!-- More tests will be added here -->
+            </div>
+        </section>
+
+<div id="gevorik-box">
+  <div id="gevorik-messages">
+    <div><b>Ընկեր Գեւորիկ:</b> Բարև, ես քո AI ուսուցիչն եմ։ Հարցրու ցանկացած դպրոցական թեմա 📚</div>
+  </div>
+  <div id="gevorik-input">
+    <input id="gevorik-text" type="text" placeholder="Գրիր քո հարցը այստեղ..." />
+    <button id="gevorik-send">📨</button>
+  </div>
+</div>
+
+<script src="gevorik.js"></script>
+
+
+
+        <!-- Games Section -->
+ <section class="game-section">
+  <div class="game-card">
+    <img src="car.png" alt="Live Streaming">
+    <h3>Car Game</h3>
+    <p>Խաղա ուղիղ եթերում և ցույց տուր քո հմտությունները բոլորին։</p>
+    <a href="game1.html" class="play-btn">Խաղալ հիմա</a>
+  </div>
+
+  <div class="game-card">
+    <img src="tic-tac-tao.png" alt="Game Reviews">
+    <h3>X and O</h3>
+    <p>Բացահայտիր ամենաթարմ խաղերի նորությունները և ակնարկները։</p>
+    <a href="game2.html" class="play-btn">Խաղալ հիմա</a>
+  </div>
+
+  <div class="game-card">
+    <img src="math.png" alt="Game Tournaments">
+    <h3>Math Challenge</h3>
+    <p>Մրցիր լավագույնների հետ և շահիր հաղթանակը։</p>
+    <a href="game3.html" class="play-btn">Խաղալ հիմա</a>
+  </div>
+</section>
+
+
+  <!-- Խաղերի դիսփլեյ -->
+  <div id="game-display"></div>
+
+  <script src="games.js"></script>
+
+    
+
+
+    <!-- Խաղերի ցուցադրման div -->
+    <div id="game-display" class="mt-8"></div>
+</section>
+
+    </main>
+
+    <custom-footer></custom-footer>
+
+    <!-- Scripts -->
+    <script src="components/navbar.js"></script>
+    <script src="components/footer.js"></script>
+    <script src="script.js"></script>
+    <script src="games.js"></script>
+    <script>
+        feather.replace();
+        
+        // Initialize Vanta.js globe
+        VANTA.GLOBE({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x3a86ff,
+            backgroundColor: 0xf8f9fa
+        });
+    </script>
+</body>
+</html>
