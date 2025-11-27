@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>3D Car Drive Fixed</title>
+<style>
+body{margin:0;overflow:hidden;background:#87CEEB;font-family:sans-serif;}
+#scoreDiv{position:absolute;top:10px;right:10px;border:3px solid red;padding:3px 50px 3px 10px;border-radius:20px;font-weight:700;font-size:24px;z-index:1000;}
+#cn{width:40px;height:40px;border-radius:50%;}
+#speedDisplay{position:absolute;top:50px;left:10px;font-size:24px;color:red;font-weight:bold;}
+#startScreen{position:absolute;top:0;left:0;width:100%;height:100%;background:#fff;display:flex;justify-content:center;align-items:center;flex-direction:column;font-size:32px;font-weight:bold;}
+#startScreen button{margin-top:20px;padding:10px 30px;font-size:28px;cursor:pointer;}
+#gameOver{position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);background:white;border:3px solid red;padding:20px 40px;display:none;text-align:center;font-size:24px;border-radius:10px;}
+#gameOver button{margin-top:10px;padding:10px 20px;font-size:20px;cursor:pointer;}
+.aImg{display:none;}
+</style>
+</head>
+<body>
+<div id="scoreDiv"><span id="score">0</span><img id="cn" src="https://image.ibb.co/jRAp0y/coin.png"></div>
+<div id="speedDisplay">Normal</div>
+<div id="startScreen">START<button id="startBtn">Խաղալ</button></div>
+<div id="gameOver"><div id="gameOverText"></div><button id="restartBtn">Խաղալ նորից</button></div>
+<canvas id="myCanvas"></canvas>
+
+<img class="aImg" id="t1" src="https://image.ibb.co/dZi5Ly/t1.png">
+<img class="aImg" id="t2" src="https://image.ibb.co/jajjDJ/t2.png">
+<img class="aImg" id="t3" src="https://image.ibb.co/it4jDJ/t5.png">
+<img class="aImg" id="t4" src="https://image.ibb.co/ksy0nd/t4.png">
+<img class="aImg" id="c1" src="https://image.ibb.co/f4v7YJ/c2.png">
+
+<script>
+(function(){
+const canvas=document.getElementById("myCanvas");
+const ctx=canvas.getContext("2d");
+const w=window.innerWidth, h=window.innerHeight;
+canvas.width=w; canvas.height=h;
+
+const scoreEl=document.getElementById("score");
+const speedEl=document.getElementById("speedDisplay");
+const startScreen=document.getElementById("startScreen");
+const startBtn=document.getElementById("startBtn");
+const gameOverDiv=document.getElementById("gameOver");
+const gameOverText=document.getElementById("gameOverText");
+const restartBtn=document.getElementById("restartBtn");
+
+let score=0, distance=0, bestDistance=0;
+let gameOver=false, gameStarted=false;
+let baseSpeed=3;
+
+const roadWidth=w/3;
+const roadLeft=(w-roadWidth)/2;
+
+const carImg=document.getElementById("c1");
+const carW=50, carH=35;
+let cx=w/2-carW/2, cy=h-carH-20;
+let cl=false, cr=false;
+
+const treeSrc=[document.getElementById("t1"),document.getElementById("t2"),document.getElementById("t3"),document.getElementById("t4")];
+const TREE_COUNT=6;
+const trees=[];
+for(let i=0;i<TREE_COUNT;i++)trees.push({img:treeSrc[i%4],x:0,y:0,speed:1+Math.random()});
+
+function resetTrees(){for(let t of trees){t.y=Math.random()*h; t.x=roadLeft+Math.random()*(roadWidth-40);}}
+resetTrees();
+
+const coinImg=document.getElementById("cn");
+const COIN_COUNT=4;
+const coins=[];
+function spawnCoins(){
+    coins.length=0;
+    for(let i=0;i<COIN_COUNT;i++){
+        let x=0,y=-Math.random()*h,safe=false;
+        while(!safe){
+            x=roadLeft+Math.random()*(roadWidth-40);
+            safe=true;
+            for(let t of trees){if(Math.abs(x-t.x)<60)safe=false;}
+        }
+        coins.push({x:x,y:y,w:40,h:40,speed:2});
+    }
+}
+spawnCoins();
+
+document.addEventListener("keydown",e=>{ if(e.key==="ArrowLeft") cl=true; if(e.key==="ArrowRight") cr=true; });
+document.addEventListener("keyup",e=>{ if(e.key==="ArrowLeft") cl=false; if(e.key==="ArrowRight") cr=false; });
+
+function updateScore(){scoreEl.textContent=score;}
+function updateSpeedDisplay(speed){speedEl.textContent=speed;}
+
+function restartGame(){gameOver=false; score=0; distance=0; cx=w/2-carW/2; cy=h-carH-20; updateScore(); spawnCoins(); resetTrees(); gameOverDiv.style.display="none"; startScreen.style.display="block"; updateSpeedDisplay("Normal"); gameStarted=false;}
+restartBtn.addEventListener("click",restartGame);
+
+startBtn.addEventListener("click",()=>{gameStarted=true; startScreen.style.display="none"; requestAnimationFrame(gameLoop);});
+
+function gameLoop(){
+    if(gameOver || !gameStarted) return;
+    ctx.clearRect(0,0,w,h);
+
+    // Adjust speed
+    let speed=baseSpeed;
+    if(distance>=150){speed=baseSpeed*2; updateSpeedDisplay("Very FAST!!");}
+    else if(distance>=100){speed=baseSpeed*1.5; updateSpeedDisplay("FAST!!");}
+    else updateSpeedDisplay("Normal");
+
+    // Road
+    ctx.fillStyle="#555"; ctx.fillRect(roadLeft,0,roadWidth,h);
+
+    // Trees
+    for(let t of trees){
+        t.y+=t.speed*speed/3;
+        if(t.y>h) t.y=-60;
+        ctx.drawImage(t.img,t.x,t.y,40,60);
+        if(cx<t.x+40 && cx+carW>t.x && cy<t.y+60 && cy+carH>t.y){
+            gameOver=true;
+            if(distance>bestDistance) bestDistance=distance;
+            gameOverText.innerHTML=`Դուք կրվեցիք!<br>Փաստացի անցած ճանապարհը՝ ${Math.floor(distance)} մետր<br>Լավագույն ռեկորդը՝ ${Math.floor(bestDistance)} մետր`;
+            gameOverDiv.style.display="block";
+            return;
+        }
+    }
+
+    // Coins
+    for(let c of coins){
+        c.y+=c.speed*speed/3;
+        if(c.y>h){
+            let safe=false,x=0;
+            while(!safe){x=roadLeft+Math.random()*(roadWidth-40); safe=true; for(let t of trees){if(Math.abs(x-t.x)<60) safe=false;}} 
+            c.x=x; c.y=-Math.random()*h;
+        }
+        if(cx<c.x+c.w && cx+carW>c.x && cy<c.y+c.h && cy+carH>c.y){
+            score++; updateScore();
+            let safe=false,x=0;
+            while(!safe){x=roadLeft+Math.random()*(roadWidth-40); safe=true; for(let t of trees){if(Math.abs(x-t.x)<60) safe=false;}} 
+            c.x=x; c.y=-Math.random()*h;
+        }
+        ctx.drawImage(coinImg,c.x,c.y,c.w,c.h);
+    }
+
+    // Car movement (confined in road)
+    if(cl) cx-=5*speed/3;
+    if(cr) cx+=5*speed/3;
+    if(cx<roadLeft) cx=roadLeft;
+    if(cx+carW>roadLeft+roadWidth) cx=roadLeft+roadWidth-carW;
+    ctx.drawImage(carImg,cx,cy,carW,carH);
+
+    distance+=speed/3;
+
+    requestAnimationFrame(gameLoop);
+}
+})();
+</script>
+</body>
+</html>

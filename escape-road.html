@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tic Tac Toe – 2 Modes + Snow + Animation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    * {margin:0; padding:0; box-sizing:border-box; font-family: Arial, sans-serif;}
+    body {
+        background: linear-gradient(to bottom, #a8edea, #fed6e3);
+        display:flex; flex-direction:column; align-items:center; min-height:100vh;
+        overflow:hidden;
+    }
+
+    /* ----- Snowflakes ---- */
+    .snowflake {
+        position: fixed;
+        top: -50px;
+        color: white;
+        font-size: 24px;
+        user-select: none;
+        pointer-events: none;
+        z-index: 1;
+        animation-name: fall;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+    }
+    @keyframes fall {
+        0% {transform: translateY(0) rotate(0deg);}
+        100% {transform: translateY(110vh) rotate(360deg);}
+    }
+
+    /* ----- Header & Score ----- */
+    .header {width: 100%; display:flex; justify-content:space-between; padding:10px 20px; position:relative; z-index:2; flex-wrap: wrap;}
+    .score {font-size:18px; font-weight:bold; color:#003d66;}
+
+    h1 {margin:10px; color:#003d66; z-index:2; text-align:center; width:100%;}
+
+    /* ----- Mode Selection ----- */
+    #modeSelect {margin: 10px; display:flex; gap:10px; flex-wrap:wrap; z-index:2; justify-content:center;}
+    #modeSelect button {
+        padding:10px 20px; font-size:16px; border-radius:10px; border:none;
+        cursor:pointer; background:#003d66; color:white; transition:0.2s;
+    }
+    #modeSelect button:hover {background:#0059a6;}
+
+    /* ----- Game Board ----- */
+    .game {
+        width:90vmin; max-width:400px; aspect-ratio:1;
+        display:grid; grid-template-columns:repeat(3,1fr); gap:1.5vmin;
+        position:relative; z-index:2;
+    }
+    .box {
+        background:#fff799;
+        display:flex; align-items:center; justify-content:center;
+        font-size:8vmin; border-radius:15px; box-shadow:0 0 10px #0006;
+        cursor:pointer; transition:0.2s transform, 0.2s background-color;
+        user-select:none;
+    }
+    .box:hover {background:#ffc46e;}
+    .box.animate {transform: scale(1.2);}
+    .box.sparkle {
+        animation: sparkle 0.5s alternate 4;
+    }
+    @keyframes sparkle {
+        0% {transform: scale(1);}
+        50% {transform: scale(1.3);}
+        100% {transform: scale(1);}
+    }
+
+    /* ----- Win Message & Reset ----- */
+    #winMsg {margin:10px; font-size:24px; font-weight:bold; color:#003d66; z-index:2; text-align:center;}
+    #reset {
+        padding:10px 20px; background:#003d66; color:white; border:none; border-radius:10px;
+        cursor:pointer; font-size:16px; margin:10px; z-index:2;
+    }
+    #reset:hover {background:#0059a6;}
+</style>
+</head>
+<body>
+
+<!-- Header / Scores -->
+<div class="header">
+    <div class="score" id="playerScore">Player 1 (X): 0</div>
+    <div class="score" id="player2Score">Player 2 / Bot (O): 0</div>
+</div>
+
+<h1>Tic Tac Toe</h1>
+
+<!-- Reset Button -->
+<button id="reset">Reset Game</button>
+
+<!-- Mode Selection -->
+<div id="modeSelect">
+    <button data-mode="bot">Player vs Bot</button>
+    <button data-mode="pvp">Player vs Player</button>
+</div>
+
+<!-- Game Board -->
+<div class="game" id="gameBoard">
+    <div class="box"></div><div class="box"></div><div class="box"></div>
+    <div class="box"></div><div class="box"></div><div class="box"></div>
+    <div class="box"></div><div class="box"></div><div class="box"></div>
+</div>
+
+<p id="winMsg"></p>
+
+<script>
+let boxes = [...document.querySelectorAll(".box")];
+let winMsg = document.getElementById("winMsg");
+let playerScoreEl = document.getElementById("playerScore");
+let player2ScoreEl = document.getElementById("player2Score");
+let resetBtn = document.getElementById("reset");
+let modeButtons = document.querySelectorAll("#modeSelect button");
+
+let playerScore = localStorage.getItem("ttt_player") || 0;
+let player2Score = localStorage.getItem("ttt_player2") || 0;
+playerScoreEl.innerText = `Player 1 (X): ${playerScore}`;
+player2ScoreEl.innerText = `Player 2 / Bot (O): ${player2Score}`;
+
+const winPatterns = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+];
+
+let currentMode = null;
+let turn = "X";
+let gameOver = false;
+
+// Reset game
+function resetGame() {
+    boxes.forEach(b => {b.innerText=""; b.classList.remove("animate","sparkle");});
+    winMsg.innerText="";
+    turn="X";
+    gameOver=false;
+}
+resetBtn.addEventListener("click", resetGame);
+
+// Check winner
+function checkWinner(){
+    for(let pattern of winPatterns){
+        let [a,b,c] = pattern;
+        if(boxes[a].innerText &&
+           boxes[a].innerText===boxes[b].innerText &&
+           boxes[b].innerText===boxes[c].innerText){
+               return {winner: boxes[a].innerText, boxes: [a,b,c]};
+           }
+    }
+    if(boxes.every(b=>b.innerText!=="")) return {winner:"Draw"};
+    return null;
+}
+
+// End game
+function endGame(result){
+    gameOver=true;
+    if(result.winner==="Draw"){winMsg.innerText="Match Draw!"; return;}
+    winMsg.innerText=result.winner + " Wins!";
+    if(result.winner==="X"){playerScore = Number(playerScore)+10; localStorage.setItem("ttt_player", playerScore);}
+    else {player2Score = Number(player2Score)+10; localStorage.setItem("ttt_player2", player2Score);}
+    playerScoreEl.innerText=`Player 1 (X): ${playerScore}`;
+    player2ScoreEl.innerText=`Player 2 / Bot (O): ${player2Score}`;
+
+    // Sparkle winning boxes
+    if(result.winner!=="Draw"){
+        result.boxes.forEach(i=>{
+            boxes[i].classList.add("sparkle");
+        });
+    }
+}
+
+// Box click
+boxes.forEach(box=>{
+    box.addEventListener("click", ()=>{
+        if(box.innerText!=="" || gameOver) return;
+        box.innerText=turn;
+        box.classList.add("animate");
+        setTimeout(()=>box.classList.remove("animate"),200);
+
+        let winner = checkWinner();
+        if(winner){endGame(winner); return;}
+
+        if(currentMode==="pvp"){
+            turn = turn==="X"?"O":"X";
+        }else if(currentMode==="bot" && turn==="X"){
+            turn="O";
+            setTimeout(botMove,300);
+        }
+    });
+});
+
+// Mode selection
+modeButtons.forEach(btn=>{
+    btn.addEventListener("click",()=>{
+        currentMode=btn.dataset.mode;
+        resetGame();
+    });
+});
+
+// Bot logic (medium ~85%)
+function botMove(){
+    if(gameOver) return;
+    let rnd=Math.random()*100;
+    let move=null;
+    if(rnd<85){
+        move=findBestMove() || randomMove();
+    } else move=randomMove();
+
+    if(move!==null){
+        boxes[move].innerText="O";
+        boxes[move].classList.add("animate");
+        setTimeout(()=>boxes[move].classList.remove("animate"),200);
+    }
+
+    let winner = checkWinner();
+    if(winner) endGame(winner);
+    else turn="X";
+}
+
+function findBestMove(){
+    for(let p of winPatterns){
+        let r = checkPattern(p,"O");
+        if(r!==null) return r;
+    }
+    for(let p of winPatterns){
+        let r = checkPattern(p,"X");
+        if(r!==null) return r;
+    }
+    return null;
+}
+function checkPattern(pattern,symbol){
+    let [a,b,c]=pattern;
+    let arr=[boxes[a].innerText,boxes[b].innerText,boxes[c].innerText];
+    if(arr.filter(v=>v===symbol).length===2 && arr.includes("")) return pattern[arr.indexOf("")];
+    return null;
+}
+function randomMove(){
+    let empty=boxes.map((b,i)=>b.innerText===""?i:null).filter(i=>i!==null);
+    return empty[Math.floor(Math.random()*empty.length)];
+}
+
+// Snow animation
+const snowChars=["❄","❅","❆"];
+for(let i=0;i<50;i++){
+    let span=document.createElement("span");
+    span.classList.add("snowflake");
+    span.innerText = snowChars[Math.floor(Math.random()*snowChars.length)];
+    span.style.left=Math.random()*100+"vw";
+    span.style.fontSize=(20+Math.random()*30)+"px";
+    span.style.animationDuration=(5+Math.random()*5)+"s";
+    document.body.appendChild(span);
+}
+</script>
+</body>
+</html>
